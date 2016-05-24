@@ -51,6 +51,7 @@
     <Compile Include="Qualify_Results\QualifyTimes.cs" />
     <Compile Include="Qualify_Results\QualifyResults.cs" />
     <Compile Include="Slate.cs" />
+    <Compile Include="TemplateLayout.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

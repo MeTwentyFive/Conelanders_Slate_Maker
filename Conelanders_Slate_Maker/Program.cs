@@ -10,7 +10,7 @@ using System.Web.Script.Serialization;
 
 namespace Conelanders_Slate_Maker {
 
-	class Program {
+	public class Program {
 
 		//Read in the json data and deserialize it.  You'll want to try catch this if I don't do it later.
 		static QualifyResults ReadQualifyData( string filename ) {
@@ -55,21 +55,25 @@ namespace Conelanders_Slate_Maker {
 			//}
 			//
 
-			var slate = new Slate( @"E:\Users\cwinton\Videos\documents-export-2016-05-03\RowPlates_Blank.tif" );
-			slate.AddText( "LESSCUBES", "Bulletproof BB", 72, 132, 776, 665, 866 );
-			slate.AddText( "www.youtube.com/user/lesscubes", "DisposableDigi BB", 48, 162, 903, 695, 947 );
-			slate.AddText( "Rookie Class", "DisposableDigi BB", 40, 291, 974 );
-			slate.AddOutLinedText( "17", "DisposableDigi BB", 99, 697, 836 );
-			slate.AddOutLinedText( "2:20.747", "DisposableDigi BB", 48, 306, 1035 );
-			slate.AddImage( @"..\..\Skins\25.png", -341, -230 );
+			var slate    = new Slate( @"E:\Users\cwinton\Videos\documents-export-2016-05-03\RowPlates_Blank.tif" );
+			var template = new TemplateLayout();
 
-			//slate.AddText( "Maestro-Ponchik", "Bulletproof BB", 72, 1279, 792, 1756, 856 );
-			slate.AddText( "Maestro-Ponchik", "Bulletproof BB", 72, 1259, 776, 1804, 866 );
-			slate.AddText( "https://goo.gl/z84w5T", "DisposableDigi BB", 48, 1262, 903, 1795, 947 );
-			slate.AddText( "\"Rookie\" Class", "DisposableDigi BB", 40, 1391, 974 );
-			slate.AddOutLinedText( "13", "DisposableDigi BB", 99, 1107, 836 );
-			slate.AddOutLinedText( "2:18.086", "DisposableDigi BB", 48, 1406, 1035 );
-			slate.AddImage( @"..\..\Skins\roterx2.png", 659, -230 );
+			slate.AddText( "LESSCUBES",                      template.LeftSide.Name             );
+			slate.AddText( "www.youtube.com/user/lesscubes", template.LeftSide.YouTubeLink      );
+			slate.AddText( "Rookie Class",                   template.LeftSide.Class            );
+			slate.AddText( "17",                             template.LeftSide.StartingPosition );
+			slate.AddText( "2:20.747",                       template.LeftSide.QualifyingTime   );
+			slate.AddImage( @"..\..\Skins\25.png",           template.LeftSide.Skin             );
+
+			slate.AddText( "Maestro-Ponchik",           template.RightSide.Name             );
+			slate.AddText( "https://goo.gl/z84w5T",     template.RightSide.YouTubeLink      );
+			slate.AddText( "\"Rookie\" Class",          template.RightSide.Class            );
+			slate.AddText( "13",                        template.RightSide.StartingPosition );
+			slate.AddText( "2:18.086",                  template.RightSide.QualifyingTime   );
+			slate.AddImage( @"..\..\Skins\roterx2.png", template.RightSide.Skin             );
+
+			////1135, 762, 1827, 1027
+			//slate.ClearArea( 1135, 762, 692, 265 );
 
 			slate.Save( @"E:\Users\cwinton\Videos\documents-export-2016-05-03\RowPlates_test1.png" );
 			//714, 843

@@ -30,12 +30,35 @@ namespace Conelanders_Slate_Maker {
 
 		}
 
+		public void AddText( string text, LayoutText textInfo ) {
+			Type textType = textInfo.GetType();
+
+			if( textType == typeof( LayoutTextFixedSize ) ) {
+				AddText( text, (LayoutTextFixedSize)textInfo );
+			}
+			else if( textType == typeof( LayoutTextFixedOutlined ) ) {
+				AddText( text, (LayoutTextFixedOutlined)textInfo );
+			}
+			else if( textType == typeof( LayoutTextBounded ) ) {
+				AddText( text, (LayoutTextBounded)textInfo );
+			}
+			else {
+				throw new ArgumentException( "Unrecognized type passed to AddText" );
+			}
+
+		}
+
 		public void AddText( string text, string font, int size, int x, int y ) {
 			Font  textFont = new Font( font, size );
 			Point point    = new Point(x, y);
 
 			_Drawing.DrawString( text, textFont, Brushes.White, point );
 
+		}
+
+		//First step make it use types
+		public void AddText( string text, LayoutTextFixedSize textInfo ) {
+			AddText( text, textInfo.Font.FontFamily, textInfo.Font.Size, textInfo.Coordinate.X, textInfo.Coordinate.Y );
 		}
 
 		//This should Autoscale text to fit in a bounding box
@@ -92,6 +115,20 @@ namespace Conelanders_Slate_Maker {
 
 		}
 
+		//First step make it use types
+		public void AddText( string text, LayoutTextBounded textInfo ) {
+
+			AddText( text,
+					 textInfo.Font.FontFamily,
+					 textInfo.Font.Size,
+					 textInfo.BoundingBox.X,
+					 textInfo.BoundingBox.Y,
+					 ( textInfo.BoundingBox.X + textInfo.BoundingBox.Width ),
+					 ( textInfo.BoundingBox.Y + textInfo.BoundingBox.Height )
+			);
+
+		}
+
 		public void AddOutLinedText( string text, string font, int size, int x, int y ) {
 			Font         textFont = new Font( font, size );
 			GraphicsPath path     = new GraphicsPath();
@@ -116,6 +153,14 @@ namespace Conelanders_Slate_Maker {
 
 		}
 
+		public void AddText( string text, LayoutTextFixedOutlined textInfo ) {
+			AddOutLinedText( text, textInfo.Font.FontFamily, textInfo.Font.Size, textInfo.Coordinate.X, textInfo.Coordinate.Y );
+		}
+
+		public void AddImage( string path, TemplatePoint coord ) {
+			AddImage( path, coord.X, coord.Y );
+		}
+
 		public void AddImage( string newImage, int x, int y ) {
 
 			if( !File.Exists( newImage ) ) {
@@ -128,6 +173,18 @@ namespace Conelanders_Slate_Maker {
 			graphic.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
 
 			_Drawing.DrawImage( image, point );
+
+		}
+
+		public void ClearArea( int x, int y, int width, int height ) {
+			GraphicsPath path = new GraphicsPath();
+			Rectangle    rect = new Rectangle( x, y, width, height );
+
+			path.AddRectangle( rect );
+
+			_Drawing.SetClip( path );
+			_Drawing.Clear( Color.Transparent );
+			_Drawing.ResetClip();
 
 		}
 
