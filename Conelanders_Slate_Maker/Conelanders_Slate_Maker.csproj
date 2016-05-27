@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Drivers.cs" />
     <Compile Include="Qualify_Results\CarInfoResult.cs" />
     <Compile Include="Qualify_Results\DriverResultInfo.cs" />
     <Compile Include="Program.cs" />

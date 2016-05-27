@@ -55,32 +55,32 @@ namespace Conelanders_Slate_Maker {
 			//}
 			//
 
-			var slate    = new Slate( @"E:\Users\cwinton\Videos\documents-export-2016-05-03\RowPlates_Blank.tif" );
-			var template = new TemplateLayout();
+			//var slate    = new Slate( @"E:\Users\cwinton\Videos\documents-export-2016-05-03\RowPlates_Blank.tif" );
+			//var template = new TemplateLayout();
 
-			slate.AddText( "LESSCUBES",                      template.LeftSide.Name             );
-			slate.AddText( "www.youtube.com/user/lesscubes", template.LeftSide.YouTubeLink      );
-			slate.AddText( "Rookie Class",                   template.LeftSide.Class            );
-			slate.AddText( "17",                             template.LeftSide.StartingPosition );
-			slate.AddText( "2:20.747",                       template.LeftSide.QualifyingTime   );
-			slate.AddImage( @"..\..\Skins\25.png",           template.LeftSide.Skin             );
+			//slate.AddText( "LESSCUBES",                      template.LeftSide.Name             );
+			//slate.AddText( "www.youtube.com/user/lesscubes", template.LeftSide.YouTubeLink      );
+			//slate.AddText( "Rookie Class",                   template.LeftSide.Class            );
+			//slate.AddText( "17",                             template.LeftSide.StartingPosition );
+			//slate.AddText( "2:20.747",                       template.LeftSide.QualifyingTime   );
+			//slate.AddImage( @"..\..\Skins\25.png",           template.LeftSide.Skin             );
 
-			slate.AddText( "Maestro-Ponchik",           template.RightSide.Name             );
-			slate.AddText( "https://goo.gl/z84w5T",     template.RightSide.YouTubeLink      );
-			slate.AddText( "\"Rookie\" Class",          template.RightSide.Class            );
-			slate.AddText( "13",                        template.RightSide.StartingPosition );
-			slate.AddText( "2:18.086",                  template.RightSide.QualifyingTime   );
-			slate.AddImage( @"..\..\Skins\roterx2.png", template.RightSide.Skin             );
+			//slate.AddText( "Maestro-Ponchik",           template.RightSide.Name             );
+			//slate.AddText( "https://goo.gl/z84w5T",     template.RightSide.YouTubeLink      );
+			//slate.AddText( "\"Rookie\" Class",          template.RightSide.Class            );
+			//slate.AddText( "13",                        template.RightSide.StartingPosition );
+			//slate.AddText( "2:18.086",                  template.RightSide.QualifyingTime   );
+			//slate.AddImage( @"..\..\Skins\roterx2.png", template.RightSide.Skin             );
 
 			////1135, 762, 1827, 1027
 			//slate.ClearArea( 1135, 762, 692, 265 );
 
-			slate.Save( @"E:\Users\cwinton\Videos\documents-export-2016-05-03\RowPlates_test1.png" );
+			//slate.Save( @"E:\Users\cwinton\Videos\documents-export-2016-05-03\RowPlates_test1.png" );
 			//714, 843
 
 
 			////NEED A CATCH
-			//var    temp = ReadQualifyData( @"2016_5_15_15_32_QUALIFY.json" );
+			//var    temp  = ReadQualifyData( @"2016_5_15_15_32_QUALIFY.json" );
 			//string skins = FindSkinsPath();
 
 			//foreach( CarInfoResult car in temp.Cars ) {
@@ -93,6 +93,10 @@ namespace Conelanders_Slate_Maker {
 			//	}
 
 			//}
+
+			var drivers = new Drivers( @"..\..\TestDriverFiles" );
+
+			drivers.DriverLookup.Count();
 
 			//Console.WriteLine( "Press any key to continue..." );
 			//Console.ReadKey();

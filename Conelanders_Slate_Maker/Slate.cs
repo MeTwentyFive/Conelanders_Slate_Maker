@@ -163,7 +163,7 @@ namespace Conelanders_Slate_Maker {
 		}
 
 		public void Save( string filename ) {
-			//_Drawing.Dispose();
+			_Drawing.Dispose();
 			_Image.Save( filename );
 		}
 
