@@ -132,7 +132,7 @@ namespace Conelanders_Slate_Maker {
 			string slateTemplate = @"RowPlates_Blank.tif";
 			var    qualifyData   = ReadQualifyData( @"2016_5_15_15_32_QUALIFY.json" );
 			string slateOutput   = qualifyData.TrackName;
-			var    drivers       = new Drivers( @"..\..\TestDriverFiles" );
+			var    drivers       = new Drivers( @"TestDriverFiles" );
 			int    numDrivers    = qualifyData.Result.Count();
 			var    template      = new TemplateLayout();
 			List<Task> tasks     = new List<Task>();
