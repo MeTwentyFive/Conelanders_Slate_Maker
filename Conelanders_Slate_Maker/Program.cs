@@ -46,8 +46,8 @@ namespace Conelanders_Slate_Maker {
 			var              slate       = new Slate( slateTemplate );
 			DriverResultInfo driver      = carInfo[0].Driver;
 			DriverInfo       driverExtra = drivers.DriverLookup[ driver.Guid ];
-			string           skinPath    = Path.Combine( SkinPath, carInfo[0].Skin + ".png" );
-			string           lapTime     = qualTime[0].LapTime;
+			string           skinPath    = Path.Combine( SkinPath, carInfo[ 0 ].Skin + ".png" );
+			string           lapTime     = qualTime[ 0 ].LapTime;
 
 			if( !File.Exists( skinPath ) ) {
 				Console.WriteLine( "Couldn't find skin: {0}", skinPath );
@@ -65,10 +65,10 @@ namespace Conelanders_Slate_Maker {
 
 			if( carInfo.Length > 1 ) {
 
-				driver      = carInfo[1].Driver;
+				driver      = carInfo[ 1 ].Driver;
 				driverExtra = drivers.DriverLookup[ driver.Guid ];
-				skinPath    = Path.Combine( SkinPath, carInfo[1].Skin + ".png" );
-				lapTime     = qualTime[1].LapTime;
+				skinPath    = Path.Combine( SkinPath, carInfo[ 1 ].Skin + ".png" );
+				lapTime     = qualTime[ 1 ].LapTime;
 				startingPosition++;
 
 				if( !File.Exists( skinPath ) ) {
@@ -108,7 +108,7 @@ namespace Conelanders_Slate_Maker {
 
 			if( !File.Exists( args[ 0 ] ) ) {
 				Console.WriteLine( "Couldn't find qualify results file...  Press Any Key to Continue" );
-				Console.WriteLine( "\tFile: '{0}'", args[0] );
+				Console.WriteLine( "\tFile: '{0}'", args[ 0 ] );
 				Console.ReadKey();
 				Environment.Exit( 26 );
 			}
@@ -120,7 +120,7 @@ namespace Conelanders_Slate_Maker {
 				}
 				catch( Exception ex ) {
 					Console.WriteLine( "Failed to create output directory, can't write output(we out)... Press Any Key to Continue\n" );
-					Console.WriteLine( "Directory: '{0}' Reason: {1}", args[1], ex );
+					Console.WriteLine( "Directory: '{0}' Reason: {1}", args[ 1 ], ex );
 					Console.ReadKey();
 					Environment.Exit( 26 );
 				}
@@ -129,10 +129,16 @@ namespace Conelanders_Slate_Maker {
 
 			SkinPath = FindSkinsPath();
 
+			//I'm lazy and don't want to deal with proper locations
+			string DriverFiles   = "TestDriverFiles";
+			if( !Directory.Exists( DriverFiles ) ) {
+				DriverFiles = Path.Combine( @"..\..", DriverFiles );
+			}
+
 			string slateTemplate = @"RowPlates_Blank.tif";
-			var    qualifyData   = ReadQualifyData( @"2016_5_15_15_32_QUALIFY.json" );
+			var    qualifyData   = ReadQualifyData( args[ 0 ] );
 			string slateOutput   = qualifyData.TrackName;
-			var    drivers       = new Drivers( @"TestDriverFiles" );
+			var    drivers       = new Drivers( DriverFiles );
 			int    numDrivers    = qualifyData.Result.Count();
 			var    template      = new TemplateLayout();
 			List<Task> tasks     = new List<Task>();
@@ -165,7 +171,7 @@ namespace Conelanders_Slate_Maker {
 				string slateName = Path.Combine( args[ 1 ], String.Format( "{0}_{1}.png", slateOutput, slateNum++ ) );
 
 				//CreateSlate( carInfo.ToArray(), qualTimes.ToArray(), (driverIndex - 1), drivers, template, slateTemplate, slateName );
-				Task task = CreateSlate( carInfo.ToArray(), qualTimes.ToArray(), (driverIndex - 1), drivers, template, slateTemplate, slateName );
+				Task task = CreateSlate( carInfo.ToArray(), qualTimes.ToArray(), driverIndex, drivers, template, slateTemplate, slateName );
 				tasks.Add( task );
 
 			}
