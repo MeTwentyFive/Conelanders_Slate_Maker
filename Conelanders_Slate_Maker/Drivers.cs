@@ -40,6 +40,7 @@ namespace Conelanders_Slate_Maker {
 		private async Task ParseDriverFile( string file ) {
 			var driver = new DriverInfo();
 
+			//Console.WriteLine( "Parsing file: " + file );
 			using( var driverData = new StreamReader( file ) ) {
 				string line = string.Empty;
 
@@ -91,11 +92,12 @@ namespace Conelanders_Slate_Maker {
 			}
 
 
-			Console.WriteLine( "Task.Run" );
+
+			//Console.WriteLine( "Task.Run" );
 			//new Thread( () => {
 				Task.WhenAll( tasks );
 			//} ).Start();
-			Console.WriteLine( "Task.Finished" );
+			//Console.WriteLine( "Task.Finished" );
 
 		}
 

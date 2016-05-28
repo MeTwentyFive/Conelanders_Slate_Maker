@@ -12,6 +12,8 @@ namespace Conelanders_Slate_Maker {
 
 	public class Program {
 
+		static string SkinPath;
+
 		//Read in the json data and deserialize it.  You'll want to try catch this if I don't do it later.
 		static QualifyResults ReadQualifyData( string filename ) {
 			string               jsonInfo   = File.ReadAllText( filename );
@@ -38,71 +40,160 @@ namespace Conelanders_Slate_Maker {
 
 		}
 
+		//Creates a single complete slate, pretty rough but I want to get something out there for feedback.
+		static async Task CreateSlate( CarInfoResult[] carInfo, QualifyTimes[] qualTime, int startingPosition, Drivers drivers, TemplateLayout template, string slateTemplate, string outputName ) {
+			Console.WriteLine( "Processing slate: {0}", outputName );
+			var              slate       = new Slate( slateTemplate );
+			DriverResultInfo driver      = carInfo[0].Driver;
+			DriverInfo       driverExtra = drivers.DriverLookup[ driver.Guid ];
+			string           skinPath    = Path.Combine( SkinPath, carInfo[0].Skin + ".png" );
+			string           lapTime     = qualTime[0].LapTime;
+
+			if( !File.Exists( skinPath ) ) {
+				Console.WriteLine( "Couldn't find skin: {0}", skinPath );
+				Console.WriteLine( "\tReplacing with alternative: {0}", skinPath );
+				skinPath = Path.Combine( SkinPath, "25.png" );
+			}
+
+			//Do the left side
+			slate.AddText(  driver.Name,                  template.LeftSide.Name             );
+			slate.AddText(  driverExtra.YouTubeLink,      template.LeftSide.YouTubeLink      );
+			slate.AddText(  driverExtra.Class + " Class", template.LeftSide.Class            );
+			slate.AddText(  startingPosition.ToString(),  template.LeftSide.StartingPosition );
+			slate.AddText(  lapTime,                      template.LeftSide.QualifyingTime   );
+			slate.AddImage( skinPath,                     template.LeftSide.Skin             );
+
+			if( carInfo.Length > 1 ) {
+
+				driver      = carInfo[1].Driver;
+				driverExtra = drivers.DriverLookup[ driver.Guid ];
+				skinPath    = Path.Combine( SkinPath, carInfo[1].Skin + ".png" );
+				lapTime     = qualTime[1].LapTime;
+				startingPosition++;
+
+				if( !File.Exists( skinPath ) ) {
+					Console.WriteLine( "Couldn't find skin: {0}", skinPath );
+					Console.WriteLine( "\tReplacing with alternative: {0}", skinPath );
+					skinPath = Path.Combine( SkinPath, "25.png" );
+				}
+
+				slate.AddText(  driver.Name,                  template.RightSide.Name             );
+				slate.AddText(  driverExtra.YouTubeLink,      template.RightSide.YouTubeLink      );
+				slate.AddText(  driverExtra.Class + " Class", template.RightSide.Class            );
+				slate.AddText(  startingPosition.ToString(),  template.RightSide.StartingPosition );
+				slate.AddText(  lapTime,                      template.RightSide.QualifyingTime   );
+				slate.AddImage( skinPath,                     template.RightSide.Skin             );
+
+			}
+			else {
+				//Needs to be moved into the TemplateLayout
+				slate.ClearArea( 1135, 762, 692, 265 );
+			}
+
+			Console.WriteLine( "Writing slate: {0}", outputName );
+
+			slate.Save( outputName );
+
+		}
+
 		//Arial Heavy
 		//DisposableDigi BB
 		static void Main( string[] args ) {
-			//FontFamily[]            fontFamilies;
-			//InstalledFontCollection installedFontCollection = new InstalledFontCollection();
 
-			// Get the array of FontFamily objects.
-			//fontFamilies = installedFontCollection.Families;
+			if( args.Count() < 2 ) {
+				Console.WriteLine( "Please specify input file and output directory...  Press Any Key to Continue" );
+				Console.ReadKey();
+				Environment.Exit( 25 );
+			}
 
-			//foreach( System.Drawing.FontFamily font in fontFamilies ) {
-			//	string temp = font.Name;
-			//	if( temp.ToLower().Contains( "dig" ) ) {
-			//		Console.WriteLine( "{0}", temp );
-			//	}
-			//}
-			//
+			if( !File.Exists( args[ 0 ] ) ) {
+				Console.WriteLine( "Couldn't find qualify results file...  Press Any Key to Continue" );
+				Console.WriteLine( "\tFile: '{0}'", args[0] );
+				Console.ReadKey();
+				Environment.Exit( 26 );
+			}
 
-			//var slate    = new Slate( @"E:\Users\cwinton\Videos\documents-export-2016-05-03\RowPlates_Blank.tif" );
-			//var template = new TemplateLayout();
+			if( !Directory.Exists( args[ 1 ] ) ) {
 
-			//slate.AddText( "LESSCUBES",                      template.LeftSide.Name             );
-			//slate.AddText( "www.youtube.com/user/lesscubes", template.LeftSide.YouTubeLink      );
-			//slate.AddText( "Rookie Class",                   template.LeftSide.Class            );
-			//slate.AddText( "17",                             template.LeftSide.StartingPosition );
-			//slate.AddText( "2:20.747",                       template.LeftSide.QualifyingTime   );
-			//slate.AddImage( @"..\..\Skins\25.png",           template.LeftSide.Skin             );
+				try {
+					Directory.CreateDirectory( args[ 1 ] );
+				}
+				catch( Exception ex ) {
+					Console.WriteLine( "Failed to create output directory, can't write output(we out)... Press Any Key to Continue\n" );
+					Console.WriteLine( "Directory: '{0}' Reason: {1}", args[1], ex );
+					Console.ReadKey();
+					Environment.Exit( 26 );
+				}
 
-			//slate.AddText( "Maestro-Ponchik",           template.RightSide.Name             );
-			//slate.AddText( "https://goo.gl/z84w5T",     template.RightSide.YouTubeLink      );
-			//slate.AddText( "\"Rookie\" Class",          template.RightSide.Class            );
-			//slate.AddText( "13",                        template.RightSide.StartingPosition );
-			//slate.AddText( "2:18.086",                  template.RightSide.QualifyingTime   );
-			//slate.AddImage( @"..\..\Skins\roterx2.png", template.RightSide.Skin             );
+			}
 
-			////1135, 762, 1827, 1027
-			//slate.ClearArea( 1135, 762, 692, 265 );
+			SkinPath = FindSkinsPath();
 
-			//slate.Save( @"E:\Users\cwinton\Videos\documents-export-2016-05-03\RowPlates_test1.png" );
-			//714, 843
+			string slateTemplate = @"RowPlates_Blank.tif";
+			var    qualifyData   = ReadQualifyData( @"2016_5_15_15_32_QUALIFY.json" );
+			string slateOutput   = qualifyData.TrackName;
+			var    drivers       = new Drivers( @"..\..\TestDriverFiles" );
+			int    numDrivers    = qualifyData.Result.Count();
+			var    template      = new TemplateLayout();
+			List<Task> tasks     = new List<Task>();
 
+			//Leave me alone, I'm being lazy and I didn't think of this until I had the other stuff done already.
+			int slateNum = 0;
+			for( int driverIndex = 0; driverIndex < numDrivers; driverIndex++ ) {
+				List<CarInfoResult> carInfo   = new List<CarInfoResult>();
+				List<QualifyTimes>  qualTimes = new List<QualifyTimes>();
 
-			////NEED A CATCH
-			//var    temp  = ReadQualifyData( @"2016_5_15_15_32_QUALIFY.json" );
-			//string skins = FindSkinsPath();
+				if( !drivers.DriverLookup.ContainsKey( qualifyData.Cars[ driverIndex ].Driver.Guid ) ) {
+					Console.WriteLine( "Exiting due to not being able to find: {0}", qualifyData.Cars[ driverIndex ].Driver.Name );
+					Console.ReadKey();
+					Environment.Exit( 25 );
+				}
 
-			//foreach( CarInfoResult car in temp.Cars ) {
-			//	string skinPath = Path.Combine( skins, car.Skin + ".png" );
+				//Driver for left side of slate
+				carInfo.Add( qualifyData.Cars.First( m => m.Driver.Guid == qualifyData.Result[ driverIndex ].DriverGuid ) );
+				qualTimes.Add( qualifyData.Result[ driverIndex ] );
 
-			//	//Console.WriteLine( "found skin for: {0}", car.Driver );
+				//Increment driver for the right side of slate
+				driverIndex++;
 
-			//	if( !File.Exists( skinPath ) ) {
-			//		Console.WriteLine( "Skin not found for: {0} - '{1}'", car.Driver.Name, skinPath );
-			//	}
+				//If we are less than numDrivers we aren't at the end and will have a right side.
+				if( driverIndex < numDrivers ) {
+					carInfo.Add( qualifyData.Cars.First( m => m.Driver.Guid == qualifyData.Result[ driverIndex ].DriverGuid ) );
+					qualTimes.Add( qualifyData.Result[ driverIndex ] );
+				}
 
-			//}
+				string slateName = Path.Combine( args[ 1 ], String.Format( "{0}_{1}.png", slateOutput, slateNum++ ) );
 
-			var drivers = new Drivers( @"..\..\TestDriverFiles" );
+				//CreateSlate( carInfo.ToArray(), qualTimes.ToArray(), (driverIndex - 1), drivers, template, slateTemplate, slateName );
+				Task task = CreateSlate( carInfo.ToArray(), qualTimes.ToArray(), (driverIndex - 1), drivers, template, slateTemplate, slateName );
+				tasks.Add( task );
 
-			drivers.DriverLookup.Count();
+			}
 
-			//Console.WriteLine( "Press any key to continue..." );
-			//Console.ReadKey();
+			//Task.WhenAll( tasks );
+			Task.Run( async () => {
+				await Task.WhenAll( tasks );
+			} );
+
+			Console.WriteLine( "Press any key to continue..." );
+			Console.ReadKey();
 
 		}
 
 	}
+
+	//Don't want to get rid of this just yet.  I plan on using it later for something in here. (ie checking to make sure people have the right shit).
+	//FontFamily[]            fontFamilies;
+	//InstalledFontCollection installedFontCollection = new InstalledFontCollection();
+
+	// Get the array of FontFamily objects.
+	//fontFamilies = installedFontCollection.Families;
+
+	//foreach( System.Drawing.FontFamily font in fontFamilies ) {
+	//	string temp = font.Name;
+	//	if( temp.ToLower().Contains( "dig" ) ) {
+	//		Console.WriteLine( "{0}", temp );
+	//	}
+	//}
 
 }

@@ -7,10 +7,7 @@ namespace Conelanders_Slate_Maker {
 
 		public string Name { get; set; }
 		public string Team { get; set; }
-		public int    Id   { get; set; }
-
-		[ScriptIgnore]
-		public string YouTubeLink { get; set; }
+		public string Guid { get; set; }
 
 	}
 
