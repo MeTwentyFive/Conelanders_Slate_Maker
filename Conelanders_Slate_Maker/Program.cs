@@ -12,6 +12,8 @@ namespace Conelanders_Slate_Maker {
 
 	public class Program {
 
+		const string UNKNOWN_SKIN = "unknown";
+
 		static string SkinPath;
 
 		//Read in the json data and deserialize it.  You'll want to try catch this if I don't do it later.
@@ -19,6 +21,16 @@ namespace Conelanders_Slate_Maker {
 			string               jsonInfo   = File.ReadAllText( filename );
 			JavaScriptSerializer serializer = new JavaScriptSerializer();
 			QualifyResults       results    = serializer.Deserialize<QualifyResults>( jsonInfo.ToString() );
+
+			for( int driverIndex = 0; driverIndex < results.Cars.Length; driverIndex++ ) {
+
+				if( String.IsNullOrWhiteSpace( results.Cars[ driverIndex ].Driver.Guid ) ) {
+					List<CarInfoResult> cars = results.Cars.ToList();
+					cars.RemoveAt( driverIndex-- );
+					results.Cars = cars.ToArray();
+				}
+
+			}
 
 			return results;
 
@@ -51,13 +63,12 @@ namespace Conelanders_Slate_Maker {
 
 			if( !File.Exists( skinPath ) ) {
 				Console.WriteLine( "Couldn't find skin: {0}", skinPath );
+				skinPath    = Path.Combine( SkinPath, UNKNOWN_SKIN + ".png" );
 				Console.WriteLine( "\tReplacing with alternative: {0}", skinPath );
-				skinPath = Path.Combine( SkinPath, "25.png" );
 			}
 
 			//Do the left side
 			slate.AddText(  driver.Name,                  template.LeftSide.Name             );
-			slate.AddText(  driverExtra.YouTubeLink,      template.LeftSide.YouTubeLink      );
 			slate.AddText(  driverExtra.Class + " Class", template.LeftSide.Class            );
 			slate.AddText(  startingPosition.ToString(),  template.LeftSide.StartingPosition );
 			slate.AddText(  lapTime,                      template.LeftSide.QualifyingTime   );
@@ -73,12 +84,11 @@ namespace Conelanders_Slate_Maker {
 
 				if( !File.Exists( skinPath ) ) {
 					Console.WriteLine( "Couldn't find skin: {0}", skinPath );
+					skinPath    = Path.Combine( SkinPath, UNKNOWN_SKIN + ".png" );
 					Console.WriteLine( "\tReplacing with alternative: {0}", skinPath );
-					skinPath = Path.Combine( SkinPath, "25.png" );
 				}
 
 				slate.AddText(  driver.Name,                  template.RightSide.Name             );
-				slate.AddText(  driverExtra.YouTubeLink,      template.RightSide.YouTubeLink      );
 				slate.AddText(  driverExtra.Class + " Class", template.RightSide.Class            );
 				slate.AddText(  startingPosition.ToString(),  template.RightSide.StartingPosition );
 				slate.AddText(  lapTime,                      template.RightSide.QualifyingTime   );
@@ -87,7 +97,7 @@ namespace Conelanders_Slate_Maker {
 			}
 			else {
 				//Needs to be moved into the TemplateLayout
-				slate.ClearArea( 1135, 762, 692, 265 );
+				slate.ClearArea( 1077, 0, 1920, 1080 );
 			}
 
 			Console.WriteLine( "Writing slate: {0}", outputName );
@@ -130,18 +140,25 @@ namespace Conelanders_Slate_Maker {
 			SkinPath = FindSkinsPath();
 
 			//I'm lazy and don't want to deal with proper locations
-			string DriverFiles   = "TestDriverFiles";
+			string DriverFiles   = "DriverFiles";
 			if( !Directory.Exists( DriverFiles ) ) {
 				DriverFiles = Path.Combine( @"..\..", DriverFiles );
 			}
 
-			string slateTemplate = @"RowPlates_Blank.tif";
+			string slateTemplate = @"RowPlates_Blank.png";
 			var    qualifyData   = ReadQualifyData( args[ 0 ] );
 			string slateOutput   = qualifyData.TrackName;
 			var    drivers       = new Drivers( DriverFiles );
 			int    numDrivers    = qualifyData.Result.Count();
 			var    template      = new TemplateLayout();
 			List<Task> tasks     = new List<Task>();
+
+			if( numDrivers >= qualifyData.Cars.Length ) {
+				numDrivers = qualifyData.Cars.Length;
+			}
+
+			//NOT_FOR_COMMIT - debugging
+			//numDrivers = 2;
 
 			//Leave me alone, I'm being lazy and I didn't think of this until I had the other stuff done already.
 			int slateNum = 0;
@@ -150,7 +167,7 @@ namespace Conelanders_Slate_Maker {
 				List<QualifyTimes>  qualTimes = new List<QualifyTimes>();
 
 				if( !drivers.DriverLookup.ContainsKey( qualifyData.Cars[ driverIndex ].Driver.Guid ) ) {
-					Console.WriteLine( "Exiting due to not being able to find: {0}", qualifyData.Cars[ driverIndex ].Driver.Name );
+					Console.WriteLine( "Exiting due to not being able to find: '{0}', {1}", qualifyData.Cars[ driverIndex ].Driver.Guid, qualifyData.Cars[ driverIndex ].Driver.Name );
 					Console.ReadKey();
 					Environment.Exit( 25 );
 				}
@@ -163,23 +180,23 @@ namespace Conelanders_Slate_Maker {
 				driverIndex++;
 
 				//If we are less than numDrivers we aren't at the end and will have a right side.
-				if( driverIndex < numDrivers ) {
+				if( driverIndex < numDrivers && !String.IsNullOrWhiteSpace( qualifyData.Result[ driverIndex ].DriverGuid ) ) {
 					carInfo.Add( qualifyData.Cars.First( m => m.Driver.Guid == qualifyData.Result[ driverIndex ].DriverGuid ) );
 					qualTimes.Add( qualifyData.Result[ driverIndex ] );
 				}
 
 				string slateName = Path.Combine( args[ 1 ], String.Format( "{0}_{1}.png", slateOutput, slateNum++ ) );
 
-				//CreateSlate( carInfo.ToArray(), qualTimes.ToArray(), (driverIndex - 1), drivers, template, slateTemplate, slateName );
-				Task task = CreateSlate( carInfo.ToArray(), qualTimes.ToArray(), driverIndex, drivers, template, slateTemplate, slateName );
-				tasks.Add( task );
+				CreateSlate( carInfo.ToArray(), qualTimes.ToArray(), driverIndex, drivers, template, slateTemplate, slateName );
+				//Task task = CreateSlate( carInfo.ToArray(), qualTimes.ToArray(), driverIndex, drivers, template, slateTemplate, slateName );
+				//tasks.Add( task );
 
 			}
 
-			//Task.WhenAll( tasks );
-			Task.Run( async () => {
-				await Task.WhenAll( tasks );
-			} );
+			////Task.WhenAll( tasks );
+			//Task.Run( async () => {
+			//	await Task.WhenAll( tasks );
+			//} );
 
 			Console.WriteLine( "Press any key to continue..." );
 			Console.ReadKey();
@@ -189,6 +206,7 @@ namespace Conelanders_Slate_Maker {
 	}
 
 	//Don't want to get rid of this just yet.  I plan on using it later for something in here. (ie checking to make sure people have the right shit).
+
 	//FontFamily[]            fontFamilies;
 	//InstalledFontCollection installedFontCollection = new InstalledFontCollection();
 

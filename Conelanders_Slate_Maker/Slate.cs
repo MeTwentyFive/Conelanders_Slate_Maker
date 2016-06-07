@@ -21,7 +21,12 @@ namespace Conelanders_Slate_Maker {
 		public Slate( string baseImage ) {
 
 			if( !File.Exists( baseImage ) ) {
-				throw new ArgumentException( String.Format( "Base image could not be found: '{0}'", baseImage ) );
+				string error_message = String.Format( "Base image could not be found: '{0}'", baseImage );
+
+				Console.WriteLine( error_message );
+
+				throw new ArgumentException( error_message );
+
 			}
 
 			_Image   = Image.FromFile( baseImage );
@@ -75,8 +80,16 @@ namespace Conelanders_Slate_Maker {
 			Point        point    = new Point( textInfo.Coordinate.X, textInfo.Coordinate.Y );
 			Pen          fatPen   = new Pen( Color.White );
 
+			//Dirty hack for now
+			if( text.Length > 1 ) {
+				point.X += textInfo.MultiCharOffset;
+			}
+
 			fatPen.Alignment = PenAlignment.Outset;
-			fatPen.Width     = 5;
+			fatPen.Width     = textInfo.Thickness;
+			//fatPen.StartCap  = LineCap.Round;
+			//fatPen.EndCap    = LineCap.Round;
+			fatPen.LineJoin  = LineJoin.Round;
 
 			path.AddString( text, textFont.FontFamily, (int) FontStyle.Regular, ( _Drawing.DpiY * textInfo.Font.Size / 72 ), point, new StringFormat() );
 
@@ -89,7 +102,7 @@ namespace Conelanders_Slate_Maker {
 
 			//_Drawing.DrawPath( Pens.White, path );
 			_Drawing.DrawPath( fatPen, path );
-			_Drawing.FillPath( new SolidBrush(Color.Black), path );
+			_Drawing.FillPath( new SolidBrush( textInfo.InnerColor ), path );
 
 		}
 
@@ -142,9 +155,9 @@ namespace Conelanders_Slate_Maker {
 			SizeF size = _Drawing.MeasureString( text, font );
 
 			int x = rect.X + ( rect.Width - (int)size.Width ) / 2;
-			int y = rect.Y + ( rect.Height - (int)font.Height / 2 ) / 2 - 5;
+			int y = rect.Y + ( rect.Height - (int)font.Height / 2 ) / 2;
 
-			//_Drawing.DrawRectangle( new Pen( Color.Red, 1 ), rect.X, rect.Y, size.Width, size.Height );
+			//_Drawing.DrawRectangle( new Pen( Color.Red, 1 ), x, y, size.Width, size.Height );
 
 			return new Point( x, y );
 

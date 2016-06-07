@@ -27,43 +27,44 @@ namespace Conelanders_Slate_Maker {
 			RightSide = new LayoutPart();
 
 			//Name Area
-			font      = new FontProperties( "Bulletproof BB", 72 );
-			leftBbox  = new BoundingBox(  132, 776, 545, 90 );
-			rightBbox = new BoundingBox( 1259, 776, 545, 90 );
+			font      = new FontProperties( "Bulletproof BB", 60 );
+			leftBbox  = new BoundingBox(  236, 829, 344, 72 );
+			rightBbox = new BoundingBox( 1330, 829, 344, 72 );
 			LeftSide.Name  = new LayoutTextBounded( font, leftBbox );
 			RightSide.Name = new LayoutTextBounded( font, rightBbox );
 
-			//YouTubeLink
-			font      = new FontProperties( "DisposableDigi BB", 48 );
-			leftBbox  = new BoundingBox(  162, 903, 545, 44 );
-			rightBbox = new BoundingBox( 1262, 903, 545, 44 );
-			LeftSide.YouTubeLink  = new LayoutTextBounded( font, leftBbox );
-			RightSide.YouTubeLink = new LayoutTextBounded( font, rightBbox );
-
 			//Class
-			font       = new FontProperties( "DisposableDigi BB", 40 );
-			leftCoord  = new TemplatePoint(  291, 974 );
-			rightCoord = new TemplatePoint( 1391, 974 );
-			LeftSide.Class  = new LayoutTextFixedSize( font, leftCoord );
-			RightSide.Class = new LayoutTextFixedSize( font, rightCoord );
+			font       = new FontProperties( "DisposableDigi BB", 35 );
+			leftCoord  = new TemplatePoint(  298, 934 );
+			rightCoord = new TemplatePoint( 1388, 934 );
+			LeftSide.Class  = new LayoutTextFixedOutlined( font, leftCoord,  4 );
+			RightSide.Class = new LayoutTextFixedOutlined( font, rightCoord, 4 );
 
 			//StartingPosition
-			font       = new FontProperties( "DisposableDigi BB", 99 );
-			leftCoord  = new TemplatePoint(  697, 836 );
-			rightCoord = new TemplatePoint( 1107, 836 );
-			LeftSide.StartingPosition  = new LayoutTextFixedOutlined( font, leftCoord );
-			RightSide.StartingPosition = new LayoutTextFixedOutlined( font, rightCoord );
+			font       = new FontProperties( "DisposableDigi BB", 149 );
+			leftCoord  = new TemplatePoint(  51,  807 );
+			rightCoord = new TemplatePoint( 1759, 807 );
+
+			var temp = new LayoutTextFixedOutlined( font, leftCoord,  5, System.Drawing.Color.Red );
+			temp.MultiCharOffset = -25;
+			LeftSide.StartingPosition  = temp;
+
+			temp = new LayoutTextFixedOutlined( font, rightCoord, 5, System.Drawing.Color.Red );
+			temp.MultiCharOffset = -25;
+			RightSide.StartingPosition = temp;
+
 
 			//QualifyingTime
-			font       = new FontProperties( "DisposableDigi BB", 48 );
-			leftCoord  = new TemplatePoint(  306, 1035 );
-			rightCoord = new TemplatePoint( 1406, 1035 );
-			LeftSide.QualifyingTime  = new LayoutTextFixedOutlined( font, leftCoord );
-			RightSide.QualifyingTime = new LayoutTextFixedOutlined( font, rightCoord );
+			font       = new FontProperties( "DisposableDigi BB", 46 );
+			leftCoord  = new TemplatePoint(  326, 777 );
+			rightCoord = new TemplatePoint( 1414, 777 );
+			LeftSide.QualifyingTime  = new LayoutTextFixedOutlined( font, leftCoord,  5 );
+			RightSide.QualifyingTime = new LayoutTextFixedOutlined( font, rightCoord, 5 );
 
+			//457, 779 - 23, 637, 1110
 			//Skin(These are negative due to me being to lazy to scale the skins down from being 1920x1080 images
-			leftCoord  = new TemplatePoint( -341, -230 );
-			rightCoord = new TemplatePoint(  659, -230 );
+			leftCoord  = new TemplatePoint( -434, -142 );
+			rightCoord = new TemplatePoint(  650, -142 );
 			LeftSide.Skin  = leftCoord;
 			RightSide.Skin = rightCoord;
 
@@ -74,7 +75,6 @@ namespace Conelanders_Slate_Maker {
 	public class LayoutPart {
 
 		public LayoutText    Name             { get; set; }
-		public LayoutText    YouTubeLink      { get; set; }
 		public LayoutText    Class            { get; set; }
 		public LayoutText    StartingPosition { get; set; }
 		public LayoutText    QualifyingTime   { get; set; }
@@ -108,7 +108,7 @@ namespace Conelanders_Slate_Maker {
 		public LayoutTextFixedSize( FontProperties font, TemplatePoint coords )
 			: base( font ) {
 
-			Coordinate = coords;
+			Coordinate      = coords;
 
 		}
 
@@ -119,14 +119,32 @@ namespace Conelanders_Slate_Maker {
 	/// </summary>
 	public class LayoutTextFixedOutlined : LayoutText {
 
-		public TemplatePoint Coordinate { get; set; }
+		public TemplatePoint        Coordinate { get; set; }
 
-		public LayoutTextFixedOutlined( FontProperties font, TemplatePoint coords )
+		public int                  Thickness { get; set; }
+
+		public System.Drawing.Color InnerColor { get; set; }
+
+		//Dirty hack
+		public int                  MultiCharOffset { get; set; }
+
+		public LayoutTextFixedOutlined( FontProperties font, TemplatePoint coords, int outlineThickness )
 			: base( font ) {
 
-			Coordinate = coords;
+			Coordinate      = coords;
+			Thickness       = outlineThickness;
+			InnerColor      = System.Drawing.Color.Black;
+			MultiCharOffset = 0;
 
 		}
+
+		public LayoutTextFixedOutlined( FontProperties font, TemplatePoint coords, int outlineThickness, System.Drawing.Color innerColor )
+			: this( font, coords, outlineThickness ) {
+
+			InnerColor = innerColor;
+
+		}
+
 
 	}
 

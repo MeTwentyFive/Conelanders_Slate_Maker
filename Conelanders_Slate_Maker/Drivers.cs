@@ -13,7 +13,7 @@ namespace Conelanders_Slate_Maker {
 		public string Name        { get; set; }
 		public string Class       { get; set; }
 		public string SteamId     { get; set; }
-		public string YouTubeLink { get; set; }
+		//public string YouTubeLink { get; set; }
 	}
 
 	public class Drivers {
@@ -52,24 +52,40 @@ namespace Conelanders_Slate_Maker {
 					}
 
 					if( line.StartsWith( "DRIVERNAME=" ) ) {
+
 						line = line.Replace( "DRIVERNAME=", "" );
-						driver.Name = line;
+
+						if( !String.IsNullOrWhiteSpace( line ) ) {
+							driver.Name = line;
+						}
+
 					}
 					else if( line.StartsWith( "CLASS=" ) ) {
+
 						line = line.Replace( "CLASS=", "" );
-						driver.Class = line;
+
+						if( !String.IsNullOrWhiteSpace( line ) ) {
+							driver.Class = line;
+						}
+
 					}
 					else if( line.StartsWith( "GUID" ) ) {
+
 						line = line.Replace( "GUID=", "" );
-						driver.SteamId = line;
-					}
-					else if( line.StartsWith( "YOUTUBE" ) ) {
-						line = line.Replace( "YOUTUBE=", "" );
-						driver.YouTubeLink = line;
+
+						if( !String.IsNullOrWhiteSpace( line ) ) {
+							driver.SteamId = line;
+						}
+
 					}
 
 				}
 
+			}
+
+			if( String.IsNullOrWhiteSpace( driver.SteamId ) ) {
+				Console.WriteLine( "Couldn't find info for a driver, skipping entry: '{0}'", file );
+				return;
 			}
 
 			DriverLookup[ driver.SteamId ] = driver;
