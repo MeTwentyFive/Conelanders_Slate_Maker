@@ -31,7 +31,14 @@ namespace Conelanders_Slate_Maker {
 
 			_Image   = Image.FromFile( baseImage );
 			_Drawing = Graphics.FromImage( _Image );
-			_Drawing.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
+
+			_Drawing.TextRenderingHint    = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
+			_Drawing.InterpolationMode    = InterpolationMode.HighQualityBicubic;
+			_Drawing.SmoothingMode        = SmoothingMode.AntiAlias;
+			_Drawing.PixelOffsetMode      = PixelOffsetMode.HighQuality;
+			//This only makes it bad apparently(from the few options I tried
+			//_Drawing.TextRenderingHint  = TextRenderingHint.AntiAlias;
+			_Drawing.CompositingQuality   = CompositingQuality.HighQuality;
 
 		}
 
@@ -92,13 +99,6 @@ namespace Conelanders_Slate_Maker {
 			fatPen.LineJoin  = LineJoin.Round;
 
 			path.AddString( text, textFont.FontFamily, (int) FontStyle.Regular, ( _Drawing.DpiY * textInfo.Font.Size / 72 ), point, new StringFormat() );
-
-			_Drawing.InterpolationMode  = InterpolationMode.High;
-			_Drawing.SmoothingMode      = SmoothingMode.HighQuality;
-			_Drawing.PixelOffsetMode    = PixelOffsetMode.HighQuality;
-			//This only makes it bad apparently(from the few options I tried
-			//_Drawing.TextRenderingHint  = TextRenderingHint.AntiAlias;
-			_Drawing.CompositingQuality = CompositingQuality.HighQuality;
 
 			//_Drawing.DrawPath( Pens.White, path );
 			_Drawing.DrawPath( fatPen, path );
