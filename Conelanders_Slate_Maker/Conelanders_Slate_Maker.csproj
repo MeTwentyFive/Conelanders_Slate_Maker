@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Drivers.cs" />
+    <Compile Include="EnttriesList\EntriesList.cs" />
     <Compile Include="Qualify_Results\CarInfoResult.cs" />
     <Compile Include="Qualify_Results\DriverResultInfo.cs" />
     <Compile Include="Program.cs" />

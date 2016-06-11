@@ -22,7 +22,7 @@ namespace Conelanders_Slate_Maker {
 
 			get {
 
-				if( BestLap == 999999999 ) {
+				if( BestLap == 999999999 || BestLap == -1 ) {
 					return false;
 				}
 
@@ -41,6 +41,9 @@ namespace Conelanders_Slate_Maker {
 
 				if( ValidTime ) {
 					output = String.Format("{0}:{1,2}.{2,3}", lap.Minutes, lap.Seconds.ToString("D2"), lap.Milliseconds.ToString("D3") );
+				}
+				else if( BestLap == -1 ) {
+					output = string.Empty;
 				}
 
 				return output;

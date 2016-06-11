@@ -145,13 +145,44 @@ namespace Conelanders_Slate_Maker {
 				DriverFiles = Path.Combine( @"..\..", DriverFiles );
 			}
 
-			string slateTemplate = @"RowPlates_Blank.png";
-			var    qualifyData   = ReadQualifyData( args[ 0 ] );
-			string slateOutput   = qualifyData.TrackName;
-			var    drivers       = new Drivers( DriverFiles );
-			int    numDrivers    = qualifyData.Result.Count();
-			var    template      = new TemplateLayout();
-			List<Task> tasks     = new List<Task>();
+			string         slateTemplate = @"RowPlates_Blank.png";
+			var            drivers       = new Drivers( DriverFiles );
+			var            template      = new TemplateLayout();
+			List<Task>     tasks         = new List<Task>();
+			string         slateOutput   = null;
+			QualifyResults qualifyData   = null;
+			int            numDrivers    = 0;
+
+			//2016_6_5_15_18_QUALIFY.json
+			try {
+
+				if( Path.GetExtension( args[ 0 ] ) == ".json" ) {
+					qualifyData = ReadQualifyData( args[ 0 ] );
+				}
+				else if( Path.GetExtension( args[ 0 ] ) == ".ini" ) {
+					var driverList = new EntriesList();
+					driverList.ParseEntryFile( args[ 0 ] );
+
+					qualifyData = new QualifyResults();
+
+					if( driverList.Entries != null && driverList.Entries.Length > 0 ) {
+						qualifyData.GenerateFromEntries( driverList.Entries );
+					}
+					else {
+						throw new Exception("No drivers parsed from input file: " + args[ 0 ] );
+					}
+
+				}
+
+			}
+			catch( Exception ex ) {
+				Console.WriteLine( "There was an error trying to parse the inputs: " +  ex );
+				Console.ReadLine();
+				Environment.Exit( 25 );
+			}
+
+			slateOutput   = qualifyData.TrackName;
+			numDrivers    = qualifyData.Result.Count();
 
 			if( numDrivers >= qualifyData.Cars.Length ) {
 				numDrivers = qualifyData.Cars.Length;
