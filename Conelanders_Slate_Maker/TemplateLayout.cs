@@ -13,8 +13,9 @@ namespace Conelanders_Slate_Maker {
 	/// </summary>
 	public class TemplateLayout {
 
-		public LayoutPart LeftSide  { get; set; }
-		public LayoutPart RightSide { get; set; }
+		public LayoutPart   LeftSide  { get; set; }
+		public LayoutPart   RightSide { get; set; }
+		public List<string> UsedFonts { get; set; }
 
 		public TemplateLayout() {
 			FontProperties font       = null;
@@ -25,6 +26,7 @@ namespace Conelanders_Slate_Maker {
 
 			LeftSide  = new LayoutPart();
 			RightSide = new LayoutPart();
+			UsedFonts = new List<string>();
 
 			//Name Area
 			font      = new FontProperties( "Bulletproof BB", 60 );
@@ -33,12 +35,16 @@ namespace Conelanders_Slate_Maker {
 			LeftSide.Name  = new LayoutTextBounded( font, leftBbox );
 			RightSide.Name = new LayoutTextBounded( font, rightBbox );
 
+			UsedFonts.Add( "Bulletproof BB" );
+
 			//Class
 			font       = new FontProperties( "DisposableDigi BB", 35 );
 			leftCoord  = new TemplatePoint(  298, 934 );
 			rightCoord = new TemplatePoint( 1388, 934 );
 			LeftSide.Class  = new LayoutTextFixedOutlined( font, leftCoord,  4 );
 			RightSide.Class = new LayoutTextFixedOutlined( font, rightCoord, 4 );
+
+			UsedFonts.Add( "DisposableDigi BB" );
 
 			//StartingPosition
 			font       = new FontProperties( "DisposableDigi BB", 149 );

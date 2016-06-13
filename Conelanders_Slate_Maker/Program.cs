@@ -16,6 +16,31 @@ namespace Conelanders_Slate_Maker {
 
 		static string SkinPath;
 
+		//Make sure all the fonts used are actually installed.
+		static void CheckFonts( string[] usedFonts ) {
+			FontFamily[]            fontFamilies;
+			InstalledFontCollection installedFontCollection = new InstalledFontCollection();
+			HashSet<string>         fontLookup              = new HashSet<string>();
+
+			// Get the array of FontFamily objects.
+			fontFamilies = installedFontCollection.Families;
+
+			foreach( System.Drawing.FontFamily family in fontFamilies ) {
+				fontLookup.Add( family.Name.ToLower() );
+			}
+
+			//foreach( System.Drawing.FontFamily font in fontFamilies ) {
+			foreach( string font in usedFonts ) {
+				//string temp = font.Name;
+
+				if( !fontLookup.Contains( font.ToLower() ) ) {
+					Console.WriteLine( "Missing font: {0}", font );
+				}
+
+			}
+
+		}
+
 		//Read in the json data and deserialize it.  You'll want to try catch this if I don't do it later.
 		static QualifyResults ReadQualifyData( string filename ) {
 			string               jsonInfo   = File.ReadAllText( filename );
@@ -153,6 +178,10 @@ namespace Conelanders_Slate_Maker {
 			QualifyResults qualifyData   = null;
 			int            numDrivers    = 0;
 
+			CheckFonts( template.UsedFonts.ToArray() );
+			Console.ReadKey();
+			System.Environment.Exit(0);
+
 			//2016_6_5_15_18_QUALIFY.json
 			try {
 
@@ -235,20 +264,5 @@ namespace Conelanders_Slate_Maker {
 		}
 
 	}
-
-	//Don't want to get rid of this just yet.  I plan on using it later for something in here. (ie checking to make sure people have the right shit).
-
-	//FontFamily[]            fontFamilies;
-	//InstalledFontCollection installedFontCollection = new InstalledFontCollection();
-
-	// Get the array of FontFamily objects.
-	//fontFamilies = installedFontCollection.Families;
-
-	//foreach( System.Drawing.FontFamily font in fontFamilies ) {
-	//	string temp = font.Name;
-	//	if( temp.ToLower().Contains( "dig" ) ) {
-	//		Console.WriteLine( "{0}", temp );
-	//	}
-	//}
 
 }
